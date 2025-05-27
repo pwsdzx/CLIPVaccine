@@ -42,7 +42,6 @@ def flip_corruption(corruption_ratio, num_classes):
     P = np.eye(num_classes)
     n = corruption_ratio
     if n > 0.0:
-        # 0 -> 1
         P[0, 0], P[0, 1] = 1. - n, n 
         for i in range(1, num_classes-1):
             P[i, i], P[i, i + 1] = 1. - n, n
