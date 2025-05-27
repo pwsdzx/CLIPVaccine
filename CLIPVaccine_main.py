@@ -2,23 +2,17 @@ import argparse
 from utilis import *
 from network import *
 from noisy_data import *
-import logging
 import numpy as np
 import torch
-from pkg_resources import packaging
-import torchvision
-from torchvision import transforms, datasets
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import torchvision
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import os
 from torchvision.datasets import CIFAR100
 import logging
 import clip
-from torch.cuda.amp import autocast, GradScaler
 import math
 from torch.optim.lr_scheduler import MultiStepLR
 
@@ -306,7 +300,7 @@ def CLIPVaccine():
     for epoch in range(0, args.max_epoch):
         train(epoch)
         _, max_test_acc = test()
-        if epoch % 3 == 0:
+        if epoch % args.estimator_interval == 0:
             T_all_train, T_all = T_estimator(epoch, net, T_estimation_original.cpu())
             T_train = torch.tensor(T_all_train).cuda()
             average = error(np.array(T_all), T_real)
