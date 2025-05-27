@@ -29,12 +29,10 @@ parser.add_argument('--dataset', type=str, default='CIFAR100')
 parser.add_argument('--network', type=str, default='r34')
 parser.add_argument('--optimizer', type=str, default=None)
 parser.add_argument('--corruption_type', type=str, default='Flip')
-parser.add_argument('--save', action='store_true') 
 parser.add_argument('--corruption_ratio', type=float, default=0.)
-parser.add_argument('--T_init', type=str, default=None)
 parser.add_argument('--batch_size', type=int, default=128)
-parser.add_argument('--max_epoch', type=int, default=200)
-parser.add_argument('--classes', type=int, default=100)
+parser.add_argument('--max_epoch', type=int, default=None)
+parser.add_argument('--classes', type=int, default=None)
 parser.add_argument('--decay_epoch', type=int, nargs='+', default=None)
 parser.add_argument('--estimator_interval', type=int, default=3)
 parser.add_argument('--data_list_exist', action='store_true')
@@ -44,9 +42,6 @@ args =parser.parse_args()
 if args.decay_epoch is None:
     decay_epoch1 = args.max_epoch - 10
     reduction_points = [decay_epoch1]
-else:
-    decay_epoch1, decay_epoch2 = args.decay_epoch[0], args.decay_epoch[1]
-    reduction_points = [decay_epoch1, decay_epoch2]
 
 logging.basicConfig(
     filename = f"",       
@@ -73,9 +68,9 @@ with torch.no_grad():
     text_features = CLIP.encode_text(text_tokens).float()
     text_features /= text_features.norm(dim=-1, keepdim=True)
 
-class T_init_random(nn.Module):
+class sig_T(nn.Module):
     def __init__(self, num_classes, init):
-        super(T_init_random, self).__init__()
+        super(sig_T, self).__init__()
 
         self.register_parameter(name='w', param=nn.parameter.Parameter(-init * torch.ones(num_classes, num_classes)))
 
@@ -91,61 +86,6 @@ class T_init_random(nn.Module):
         T = F.normalize(T, p=1, dim=1)
         return T
 
-def T_init_CLIP():
-    all_list_probs = []
-    all_list_index = []
-    index = 0
-    for i in range(args.classes):
-        class_list = []
-        all_list_probs.append(class_list)
-    for i in range(args.classes):
-        class_list = []
-        all_list_index.append(class_list)
-    with torch.no_grad():
-        for data in loader:
-            images, labels = data
-            images = images.half()
-            with autocast():
-                image_features = CLIP.encode_image(images.cuda()).float()
-            text_probs = (100.0 * image_features @ text_features.T).softmax(dim=-1)
-            probs, predicted = torch.max(text_probs, 1)
-            for i in range(len(probs)):
-                all_list_probs[predicted[i]].append(probs[i])
-                all_list_index[predicted[i]].append(index)
-                index += 1
-
-    combinations = []
-    for i in range(args.classes):
-        list2 = [x.item() for x in all_list_probs[i]]
-        list1 = all_list_index[i]
-        combination = combine_lists(list1, list2)
-        combinations.append(combination)
-
-    high_index_probs_tuple_list = []
-    per = 1
-
-    for i in range(args.classes):
-        alist = combinations[i]
-        selected_list = select_top_percent(alist, 1, per)
-        high_index_probs_tuple_list.append(selected_list)
-
-    T_all = []
-    for classes in range(args.classes):
-        T_row = []
-        selected_nosiy_label = []
-        alist = high_index_probs_tuple_list[classes]
-        index_list = [x[0] for x in alist]
-        for i in index_list:
-            selected_nosiy_label.append(label_list[i])
-        for i in range(args.classes):
-            count = len([x for x in selected_nosiy_label if x == i])
-            if len(index_list) != 0:
-                T_row.append(count / len(index_list))
-            else:
-                T_row.append(0)
-        T_all.append(T_row)
-    return T_all
-
 def get_momentum_T(epoch, end):
     last = end
     if epoch <= last:
@@ -160,7 +100,7 @@ def get_momentum_T(epoch, end):
 
 def get_momentum_KD(epoch):
     if args.optimizer == 'SGD':
-        last = 5
+        last = int(args.max_epoch/30)
         if epoch <= last:
             t = epoch
         else:
@@ -270,11 +210,8 @@ def CLIPVaccine():
     else:
         net = ResNet34(args.classes).cuda()
 
-    if args.T_init == 'CLIP':
-        T_estimation_original = torch.tensor(T_init_CLIP()).cuda()
-    else:
-        trans = T_init_random(num_classes=args.classes, init=4.5)
-        T_estimation_original = torch.tensor(trans()).cuda()
+    trans = sig_T(num_classes=args.classes, init=4.5)
+    T_estimation_original = torch.tensor(trans()).cuda()
 
     T_train = T_estimation_original
 
