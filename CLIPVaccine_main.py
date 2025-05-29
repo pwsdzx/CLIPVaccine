@@ -27,15 +27,16 @@ parser.add_argument('--corruption_ratio', type=float, default=0.)
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--max_epoch', type=int, default=None)
 parser.add_argument('--classes', type=int, default=None)
-parser.add_argument('--decay_epoch', type=int, nargs='+', default=None)
 parser.add_argument('--estimator_interval', type=int, default=3)
 parser.add_argument('--data_list_exist', action='store_true')
 args =parser.parse_args()
 
 
-if args.decay_epoch is None:
-    decay_epoch1 = args.max_epoch - 10
-    reduction_points = [decay_epoch1]
+if args.optimizer == 'SGD':
+    decay_epoch1, decay_epoch2 = args.max_epoch - 20, args.max_epoch - 10
+    reduction_points = [decay_epoch1, decay_epoch2]
+else:
+    reduction_points = [args.max_epoch - 10]
 
 logging.basicConfig(
     filename = f"",       
