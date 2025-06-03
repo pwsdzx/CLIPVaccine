@@ -21,7 +21,7 @@ parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--seed', type=int, default=1)
 parser.add_argument('--dataset', type=str, default='CIFAR100')
 parser.add_argument('--network', type=str, default='r34')
-parser.add_argument('--optimizer', type=str, default=None)
+parser.add_argument('--optimizer', type=str, default='AdamW')
 parser.add_argument('--corruption_type', type=str, default='Flip')
 parser.add_argument('--corruption_ratio', type=float, default=0.)
 parser.add_argument('--batch_size', type=int, default=128)
@@ -31,6 +31,8 @@ parser.add_argument('--estimator_interval', type=int, default=3)
 parser.add_argument('--data_list_exist', action='store_true')
 args =parser.parse_args()
 
+print('Args:')
+print(args)
 
 if args.optimizer == 'SGD':
     decay_epoch1, decay_epoch2 = args.max_epoch - 20, args.max_epoch - 10
