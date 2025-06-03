@@ -106,5 +106,7 @@ def create_noisy_dataset(target_dataset, noise_type, noise_ratio, data_list_exis
                   'rb') as f:
                 data_list = pickle.load(f)
     else:
+        print('Obtaining the sample representations from CLIP.')
         data_list = create_data_list(target_dataset)
+        print('Finish.')
     return noisy_dataset(data_list, label_list), label_list, T_real
