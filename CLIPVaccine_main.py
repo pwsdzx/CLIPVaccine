@@ -38,7 +38,8 @@ if args.optimizer == 'SGD':
     decay_epoch1, decay_epoch2 = args.max_epoch - 20, args.max_epoch - 10
     reduction_points = [decay_epoch1, decay_epoch2]
 else:
-    reduction_points = [args.max_epoch - 10]
+    decay_epoch1 = args.max_epoch - 10
+    reduction_points = [decay_epoch1]
 
 logging.basicConfig(
     filename = f"",       
