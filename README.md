@@ -20,5 +20,5 @@ python CLIPVaccine_main.py --dataset CIFAR100 --network r34 --optimizer SGD --co
 ```
 Tips: During the first run, it will take some time to download the dataset and generate offline CLIP feature representations. For subsequent runs, you can add command `--data_list_exist` to avoid the overhead of regenerating offline CLIP feature representations.
 ## Example Results
-![Example Results]()
+![Example Results](experiment_results.png)
 
