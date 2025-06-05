@@ -6,6 +6,6 @@ This repository contains the source code for the paper CLIPVaccine: Mitigating R
 ## Installation
 To use this project, you will need to create the following environment:
 - python 3.8
-- conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.6 -c pytorch -c nvidia
+- Pytorch:'conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.6 -c pytorch -c nvidia'
 - Download , and put the decompressed A into the file
 ## Reproducing Results
