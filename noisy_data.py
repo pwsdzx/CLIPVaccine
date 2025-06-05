@@ -20,7 +20,7 @@ def create_data_list(target_dataset):
             teacher_feature = CLIP.encode_image(input).detach()
             tuple = (data, teacher_feature)
             data_list.append(tuple)
-        with open('',
+        with open('../CIFAR100.pkl',
                   'wb') as f:
             pickle.dump(data_list, f)
         return data_list
@@ -33,7 +33,7 @@ def create_data_list(target_dataset):
             teacher_feature = CLIP.encode_image(input).detach()
             tuple = (data, teacher_feature)
             data_list.append(tuple)
-        with open('',
+        with open('../CIFAR10.pkl',
                   'wb') as f:
             pickle.dump(data_list, f)
         return data_list
@@ -98,11 +98,11 @@ def create_noisy_dataset(target_dataset, noise_type, noise_ratio, data_list_exis
 
     if data_list_exist == True:
         if target_dataset == 'CIFAR100':
-            with open('',   
+            with open('../CIFAR100.pkl',
                   'rb') as f:
                 data_list = pickle.load(f)
         elif target_dataset == 'CIFAR10':
-            with open('',   
+            with open('../CIFAR10.pkl',
                   'rb') as f:
                 data_list = pickle.load(f)
     else:
