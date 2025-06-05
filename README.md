@@ -10,4 +10,5 @@ To use this project, you will need to create the following environment:
 - CLIP：Download `clip.zip`, and put the decompressed `clip` into your environment.
 ## Reproducing Results
 To reproduce the results from our paper, follow these steps:
-1.a
+1. a
+2. b
