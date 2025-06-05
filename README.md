@@ -18,4 +18,5 @@ cifar100 experiment with uniform and flip noises
 python CLIPVaccine_main.py --dataset CIFAR100 --network r34 --corruption_type Uniform --corruption_ratio 0.50 --batch_size 128 --max_epoch 60  --classes 100 --estimator_interval 3
 python CLIPVaccine_main.py --dataset CIFAR100 --network r34 --optimizer SGD --corruption_type Flip --corruption_ratio 0.45 --batch_size 128 --max_epoch 200 --classes 100 --decay_epoch 110 120 --estimator_interval 3
 ```
+Tips:During the first run, it will take some time to download the dataset and generate offline CLIP feature representations. For subsequent runs, you can add command `--data_list_exist` to avoid the overhead of regenerating offline CLIP feature representations.
 
