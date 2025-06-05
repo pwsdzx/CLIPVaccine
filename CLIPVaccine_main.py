@@ -42,7 +42,7 @@ else:
     reduction_points = [decay_epoch1]
 
 logging.basicConfig(
-    filename = f"",       
+    filename = f"../{args.dataset}_{args.corruption_type}_{args.corruption_ratio}_logging.txt",
     level = logging.INFO,
     format = "%(asctime)s - %(message)s"
 )
@@ -292,7 +292,7 @@ def CLIPVaccine():
         test_acc = 100. * correct / total
         if test_acc > max:
             max = test_acc
-            file_path = f''
+            file_path = f'../{args.dataset}_{args.corruption_type}_{args.corruption_ratio}_model.pth'
             torch.save(net.state_dict(), file_path)
             print("Model save successfully!")
         print(f"Test Loss: {test_loss}, Test Accuracy: {test_acc}")
