@@ -9,7 +9,7 @@ To use this project, you will need to create the following environment:
 - Pytorch: `conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.6 -c pytorch -c nvidia`
 - CLIP:
   1. `pip install ftfy regex tqdm packaging`   
-  2. Download `CLIPZIP.zip`, and put the decompressed `clip` into your environment.
+  2. Download `CLIPZIP.zip`, and put the decompressed `clip`, a python package, into your environment to run the examples we provide.
 ## Reproducing Results
 To reproduce the results from our paper, train the model by running the following commands:
 ```
